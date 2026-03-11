@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#ffb6c1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="生日快乐">
+    <title>生日快乐 ❤️</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; overflow: hidden; }
+        body {
+            min-height: 100vh;
+            height: 100vh;
+            font-family: 'Microsoft YaHei', 'PingFang SC', 'SimHei', sans-serif;
+            background: linear-gradient(160deg, #ffe4ec 0%, #ffc0cb 35%, #ffb6c1 60%, #ff9ebb 100%);
+            background-attachment: fixed;
+            overflow: hidden;
+            color: #5c2d4d;
+            display: flex;
+            flex-direction: column;
+        }
+        /* 飘落装饰 */
+        .floater {
+            position: fixed;
+            pointer-events: none;
+            z-index: 0;
+            font-size: 1.2rem;
+            opacity: 0.35;
+            animation: floatDown 12s linear infinite;
+        }
+        .floater:nth-child(1) { left: 5%; animation-delay: 0s; animation-duration: 14s; }
+        .floater:nth-child(2) { left: 15%; animation-delay: 2s; animation-duration: 11s; }
+        .floater:nth-child(3) { left: 25%; animation-delay: 4s; animation-duration: 13s; }
+        .floater:nth-child(4) { left: 40%; animation-delay: 1s; animation-duration: 15s; }
+        .floater:nth-child(5) { left: 55%; animation-delay: 3s; animation-duration: 12s; }
+        .floater:nth-child(6) { left: 70%; animation-delay: 5s; animation-duration: 14s; }
+        .floater:nth-child(7) { left: 85%; animation-delay: 2.5s; animation-duration: 11s; }
+        .floater:nth-child(8) { left: 95%; animation-delay: 1.5s; animation-duration: 13s; }
+        @keyframes floatDown {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.35; }
+            90% { opacity: 0.2; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        body.before-first-click .container {
+            opacity: 0;
+            pointer-events: none;
+        }
+        body.before-first-click .polaroid {
+            animation: none !important;
+            opacity: 0 !important;
+        }
+        .container {
+            position: relative;
+            z-index: 1;
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: row;
+            max-width: 100%;
+            padding: 0.5rem 0.75rem;
+            gap: 0.75rem;
+            transition: opacity 0.5s ease;
+        }
+        .main-left {
+            flex-shrink: 0;
+            width: 22%;
+            min-width: 140px;
+            max-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            overflow-y: auto;
+        }
+        .main-right {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        /* 音乐按钮 */
+        .music-wrap {
+            text-align: right;
+            flex-shrink: 0;
+            margin-bottom: 0.25rem;
+        }
+        .music-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: rgba(255,255,255,0.75);
+            border: 2px solid #e91e8c;
+            border-radius: 999px;
+            color: #c71585;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(233,30,140,0.25);
+            transition: all 0.3s ease;
+        }
+        .music-btn:hover {
+            background: #fff;
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(233,30,140,0.35);
+        }
+        .music-btn .icon { font-size: 1rem; }
+        /* 首次点击开启音乐遮罩（浏览器禁止自动播放时提示） */
+        .music-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(255, 182, 193, 0.92);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+        .music-overlay.hidden { pointer-events: none; opacity: 0; }
+        .music-overlay-text {
+            padding: 24px 48px;
+            background: #fff;
+            border-radius: 16px;
+            color: #8b2252;
+            font-size: 1.2rem;
+            font-weight: 500;
+            box-shadow: 0 8px 32px rgba(139,34,82,0.2);
+            cursor: pointer;
+        }
+        /* 标题区 */
+        .header {
+            text-align: center;
+            flex-shrink: 0;
+            margin-bottom: 0.35rem;
+        }
+        .title {
+            font-size: clamp(1.35rem, 4vw, 1.8rem);
+            font-weight: 700;
+            color: #8b2252;
+            text-shadow: 0 2px 20px rgba(255,182,193,0.5);
+            margin-bottom: 0.2rem;
+            animation: titleIn 1s ease-out;
+        }
+        .subtitle {
+            font-size: 0.85rem;
+            font-weight: 300;
+            color: #a64d79;
+            letter-spacing: 0.05em;
+            animation: titleIn 1s ease-out 0.2s both;
+        }
+        @keyframes titleIn {
+            from { opacity: 0; transform: translateY(-15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* 照片墙 - 25 格爱心网格 + 上方小爱心 */
+        .photo-wall {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0.25rem 0;
+        }
+        .heart-icon {
+            font-size: 1.4rem;
+            color: #ffb6c1;
+            margin-bottom: 0.3rem;
+            text-align: center;
+        }
+        .heart-wrap {
+            position: relative;
+            width: 90vmin;
+            height: 90vmin;
+            max-width: 95vw;
+            max-height: 95vw;
+            overflow: visible;
+        }
+        .polaroid {
+            position: absolute;
+            background: #fff;
+            border: 1px solid rgba(255, 182, 193, 0.65);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, z-index 0s, box-shadow 0.3s ease;
+            opacity: 0;
+            animation: polaroidIn 0.5s ease forwards;
+            box-sizing: border-box;
+            height: 0;
+            cursor: pointer;
+        }
+        .polaroid:hover {
+            transform: rotate(var(--r, 0deg)) scale(1.06);
+            z-index: 10;
+            box-shadow: 0 10px 24px rgba(139,34,82,0.28);
+        }
+        .polaroid.polaroid-center { z-index: 2; }
+        .polaroid-inner {
+            position: absolute;
+            left: 4px;
+            top: 4px;
+            right: 4px;
+            bottom: 14px;
+            overflow: hidden;
+        }
+        .polaroid-inner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .polaroid .tack {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            top: -2px;
+        }
+        @keyframes polaroidIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; }
+        }
+        /* 点击放大遮罩 */
+        .zoom-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 8888;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .zoom-overlay.show { display: flex; }
+        .zoom-overlay img {
+            max-width: 45%;
+            max-height: 45vh;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 12px 48px rgba(0,0,0,0.5);
+            transition: transform 0.25s ease;
+        }
+        .zoom-overlay img.zoom-2x {
+            transform: scale(2);
+        }
+        /* 祝福语 - 左侧 */
+        .wishes {
+            text-align: left;
+            padding: 0.75rem 0.6rem;
+            background: rgba(255,255,255,0.65);
+            border-radius: 12px;
+            border: 1px solid rgba(255,182,193,0.5);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            min-height: 8em;
+            max-height: 120vh;
+            overflow-y: auto;
+        }
+        .wishes .line {
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: #5c2d4d;
+            margin-bottom: 0.4rem;
+            min-height: 1.5em;
+        }
+        .wishes .line:last-child { margin-bottom: 0; }
+        .wishes .sign {
+            margin-top: 0.35rem;
+            font-weight: 500;
+            color: #c71585;
+        }
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background: #c71585;
+            margin-left: 2px;
+            vertical-align: text-bottom;
+            animation: blink 0.8s step-end infinite;
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="music-overlay" id="musicOverlay">
+        <div class="music-overlay-text">点击此处或页面任意处播放音乐 ❤️</div>
+    </div>
+    <div class="floater">❤</div>
+    <div class="floater">✦</div>
+    <div class="floater">❤</div>
+    <div class="floater">✿</div>
+    <div class="floater">❤</div>
+    <div class="floater">✦</div>
+    <div class="floater">✿</div>
+    <div class="floater">❤</div>
+
+    <div class="container">
+        <aside class="main-left">
+            <div class="wishes">
+                <p class="line" id="line1"></p>
+                <p class="line" id="line2"></p>
+                <p class="line" id="line3"></p>
+                <p class="line" id="line4"></p>
+                <p class="line sign" id="line5"></p>
+            </div>
+        </aside>
+        <div class="main-right">
+            <div class="music-wrap">
+                <button type="button" class="music-btn" id="musicBtn" aria-label="播放背景音乐">
+                    <span class="icon" id="musicIcon">▶</span>
+                    <span id="musicText">播放音乐</span>
+                </button>
+            </div>
+            <header class="header">
+                <h1 class="title">生日快乐 ❤️</h1>
+                <p class="subtitle">愿你的每一天都像今天一样被爱包围</p>
+            </header>
+            <section class="photo-wall">
+                <div class="heart-icon" aria-hidden="true">❤</div>
+                <div class="heart-wrap" id="heartWrap"></div>
+            </section>
+        </div>
+    </div>
+
+    <div class="zoom-overlay" id="zoomOverlay" aria-hidden="true">
+        <img id="zoomImg" src="" alt="放大查看">
+    </div>
+
+    <audio id="bgMusic" preload="auto">
+        <source src="生日图片/纸短情长.mp3" type="audio/mpeg">
+        您的浏览器不支持音频播放。
+    </audio>
+
+    <script>
+        /** 爱心墙布局：放大照片、铺满空白区域；触碰时 overlay 内以 2 倍显示 */
+        function getHeartLayout() {
+            return [
+                { left: 26,  top: 0,    w: 22, h: 22, r: 0 },
+                { left: 68,  top: 0,    w: 22, h: 22, r: 0 },
+                { left: 4,   top: 16,   w: 22, h: 24, r: 0 },
+                { left: 4,   top: 36,   w: 22, h: 24, r: 0 },
+                { left: 28,  top: 10,   w: 44, h: 32, r: 0,  center: true },
+                { left: 72,  top: 16,   w: 22, h: 24, r: 0 },
+                { left: 72,  top: 36,   w: 22, h: 24, r: 0 },
+                { left: -18, top: 16,   w: 20, h: 24, r: 0 },
+                { left: -20, top: 38,   w: 22, h: 18, r: 0 },
+                { left: -16, top: 54,   w: 20, h: 22, r: 0 },
+                { left: -8,  top: 74,   w: 20, h: 22, r: 0 },
+                { left: 98,  top: 16,   w: 20, h: 24, r: 0 },
+                { left: 96,  top: 38,   w: 22, h: 18, r: 0 },
+                { left: 96,  top: 54,   w: 20, h: 22, r: 0 },
+                { left: 88,  top: 74,   w: 20, h: 22, r: 0 },
+                { left: 10,  top: 74,   w: 22, h: 22, r: 0 },
+                { left: 34,  top: 74,   w: 22, h: 22, r: 0 },
+                { left: 32,  top: 52,   w: 36, h: 22, r: 0 },
+                { left: 70,  top: 52,   w: 22, h: 22, r: 0 },
+                { left: 34,  top: 72,   w: 32, h: 20, r: 0 },
+                { left: 34,  top: 90,   w: 32, h: 20, r: 0 },
+                { left: 22,  top: 42,   w: 12, h: 14, r: 0 },
+                { left: 66,  top: 42,   w: 12, h: 14, r: 0 },
+                { left: -4,  top: 44,   w: 14, h: 16, r: 0 },
+                { left: 90,  top: 44,   w: 14, h: 16, r: 0 },
+                { left: 6,   top: 52,   w: 26, h: 24, r: 0 },
+                { left: 68,  top: 76,   w: 18, h: 22, r: 0 }
+            ];
+        }
+
+        (function buildHeartWall() {
+            var TACK_COLORS = ['#e91e8c', '#f06292', '#ba68c8', '#7986cb'];
+            var wrap = document.getElementById('heartWrap');
+            var zoomOverlay = document.getElementById('zoomOverlay');
+            var zoomImg = document.getElementById('zoomImg');
+            if (!wrap) return;
+            var layout = getHeartLayout();
+            var basePath = '生日图片/';
+            layout.forEach(function (item, i) {
+                var n = i + 1;
+                var src = basePath + n + '.jpg';
+                var fallback = '生日图片/placeholder.jpg';
+                var tackPos = i % 2 === 0 ? 'left:50%;margin-left:-3px' : (i % 4 < 2 ? 'left:6px' : 'right:6px');
+                var tackColor = TACK_COLORS[i % TACK_COLORS.length];
+                var centerClass = item.center ? ' polaroid-center' : '';
+                var div = document.createElement('div');
+                div.className = 'polaroid' + centerClass;
+                div.style.left = item.left + '%';
+                div.style.top = item.top + '%';
+                div.style.width = item.w + '%';
+                div.style.paddingBottom = item.h + '%';
+                div.style.setProperty('--r', item.r + 'deg');
+                div.style.transform = 'rotate(' + item.r + 'deg)';
+                div.style.animationDelay = (0.4 + i * 0.38) + 's';
+                div.innerHTML = '<span class="tack" style="' + tackPos + ';background:' + tackColor + '"></span>' +
+                    '<span class="polaroid-inner"><img src="' + src + '" alt="' + n + '" onerror="this.onerror=null;this.src=\'' + fallback + '\'"></span>';
+                var img = div.querySelector('img');
+                div.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    zoomImg.src = img.currentSrc || img.src || '';
+                    zoomImg.classList.add('zoom-2x');
+                    if (zoomOverlay) {
+                        zoomOverlay.classList.add('show');
+                        zoomOverlay.setAttribute('aria-hidden', 'false');
+                    }
+                });
+                wrap.appendChild(div);
+            });
+            if (zoomOverlay) {
+                zoomOverlay.addEventListener('click', function () {
+                    zoomOverlay.classList.remove('show');
+                    zoomOverlay.setAttribute('aria-hidden', 'true');
+                    zoomImg.classList.remove('zoom-2x');
+                });
+            }
+        })();
+
+        (function () {
+            document.body.classList.add('before-first-click');
+            var overlay = document.getElementById('musicOverlay');
+            var btn = document.getElementById('musicBtn');
+            var icon = document.getElementById('musicIcon');
+            var text = document.getElementById('musicText');
+            var audio = document.getElementById('bgMusic');
+            var chorusStart = 55;
+            var chorusEnd = 115;
+            function updateBtnState() {
+                if (icon) icon.textContent = audio.paused ? '▶' : '❚❚';
+                if (text) text.textContent = audio.paused ? '播放音乐' : '暂停音乐';
+            }
+            function startMusic() {
+                audio.currentTime = chorusStart;
+                audio.play().then(function () {
+                    updateBtnState();
+                    if (overlay) overlay.classList.add('hidden');
+                }).catch(function () {
+                    updateBtnState();
+                });
+            }
+            if (audio) {
+                audio.addEventListener('timeupdate', function () {
+                    if (!audio.paused && audio.currentTime >= chorusEnd) {
+                        audio.currentTime = chorusStart;
+                    }
+                });
+                audio.addEventListener('play', function () {
+                    if (audio.currentTime < chorusStart || audio.currentTime >= chorusEnd) {
+                        audio.currentTime = chorusStart;
+                    }
+                });
+            }
+            if (overlay) {
+                overlay.addEventListener('click', function () {
+                    startMusic();
+                    overlay.classList.add('hidden');
+                });
+            }
+            document.body.addEventListener('click', function firstClick() {
+                document.body.classList.remove('before-first-click');
+                if (audio.paused) {
+                    startMusic();
+                }
+                if (overlay) overlay.classList.add('hidden');
+                if (window.startTypingEffect) window.startTypingEffect();
+                document.body.removeEventListener('click', firstClick);
+            }, { once: true });
+            updateBtnState();
+            audio.currentTime = chorusStart;
+            audio.play().then(function () {
+                updateBtnState();
+                if (overlay) overlay.classList.add('hidden');
+            }).catch(function () {
+                updateBtnState();
+            });
+            if (btn) {
+                btn.addEventListener('click', function () {
+                    if (audio.paused) {
+                        audio.currentTime = chorusStart;
+                        audio.play().catch(function () {});
+                    } else {
+                        audio.pause();
+                    }
+                    updateBtnState();
+                });
+            }
+        })();
+
+        (function typingEffect() {
+            var lines = [
+                '♡ʜᴀᴘᴘʏ ʙɪʀᴛʜᴅᴀʏ ᴛᴏ ʏᴏᴜ♡',
+                '✨叮~🥂',
+                '纸短情长 我要用一辈子来写',
+                '愿余生长长的路我们慢慢走❤️',
+                '       —— 爱你的陈先生 ❤️'
+            ];
+            var lineIds = ['line1', 'line2', 'line3', 'line4', 'line5'];
+            var speed = 80;
+            var cursorHtml = '<span class="typing-cursor"></span>';
+
+            function typeLine(lineEl, str, onDone) {
+                lineEl.innerHTML = cursorHtml;
+                var i = 0;
+                function addChar() {
+                    if (i >= str.length) {
+                        lineEl.innerHTML = str;
+                        if (onDone) setTimeout(onDone, 400);
+                        return;
+                    }
+                    lineEl.innerHTML = str.slice(0, i + 1) + cursorHtml;
+                    i++;
+                    setTimeout(addChar, speed);
+                }
+                addChar();
+            }
+
+            function runSequence(index) {
+                if (index >= lineIds.length) return;
+                var el = document.getElementById(lineIds[index]);
+                if (!el) { runSequence(index + 1); return; }
+                typeLine(el, lines[index], function () {
+                    runSequence(index + 1);
+                });
+            }
+
+            window.startTypingEffect = function () {
+                setTimeout(function () { runSequence(0); }, 800);
+            };
+        })();
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js').catch(function () {});
+        }
+    </script>
+</body>
+</html>
