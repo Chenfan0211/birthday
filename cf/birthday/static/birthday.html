@@ -179,6 +179,7 @@
             max-width: 95vw;
             max-height: 95vw;
             overflow: visible;
+            transform: translateX(-8%);
         }
         .polaroid {
             position: absolute;
@@ -283,6 +284,32 @@
         }
         @keyframes blink {
             50% { opacity: 0; }
+        }
+        /* 移动端适配（例如 iPhone 13），避免右侧图片被裁切 */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .main-left {
+                width: 100%;
+                min-width: 0;
+                order: 2;
+                max-height: 40vh;
+            }
+            .main-right {
+                width: 100%;
+                order: 1;
+            }
+            .photo-wall {
+                padding: 0.25rem 0;
+            }
+            .heart-wrap {
+                width: 100%;
+                max-width: 100%;
+                height: auto;
+                max-height: 80vh;
+            }
         }
     </style>
 </head>
