@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+    <meta name="theme-color" content="#c9a962">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>我们结婚2周年了 ❤️</title>
+    <style>
+        :root {
+            /* 香槟金 + 纯白 + 柔和粉 */
+            --champagne: #c9a962;
+            --champagne-light: #e8d9b0;
+            --champagne-dark: #a68b4a;
+            --white: #ffffff;
+            --pink-soft: #f5dce4;
+            --pink-soft-2: #f0d0da;
+            --pink-soft-3: #e8c4d0;
+            --text-primary: #4a3c35;
+            --text-secondary: #6b5b52;
+        }
+        /* 标题：衬线体 */
+        .font-serif {
+            font-family: 'Songti SC', 'SimSun', '宋体', 'Times New Roman', 'Georgia', serif;
+        }
+        /* 正文：无衬线体 */
+        .font-sans {
+            font-family: 'PingFang SC', 'Microsoft YaHei', 'SimHei', 'Helvetica Neue', Arial, sans-serif;
+        }
+        /* 关键日期 / 签名：手写体 */
+        .font-handwriting {
+            font-family: 'KaiTi', 'STKaiti', '楷体', 'FangSong', '仿宋', 'Segoe Script', serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', 'SimHei', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(165deg, var(--white) 0%, var(--pink-soft) 25%, var(--pink-soft-2) 50%, var(--pink-soft-3) 100%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .floater {
+            position: fixed;
+            pointer-events: none;
+            z-index: 0;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            opacity: 0.45;
+            animation: floatDown 20s linear infinite;
+        }
+        @keyframes floatDown {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+            6% { opacity: 0.45; }
+            94% { opacity: 0.15; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+
+        #app { position: relative; z-index: 1; }
+
+        /* 仿 birthday：首次点击前主内容不显示 */
+        body.before-first-click #app > *:not(.entry-overlay) {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* 首次点击开启音乐遮罩（与 birthday 一致） */
+        .entry-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(245, 220, 228, 0.92);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: opacity 0.5s ease;
+        }
+        .entry-overlay.hidden { pointer-events: none; opacity: 0; }
+        .entry-overlay-text {
+            padding: 24px 48px;
+            background: var(--white);
+            border-radius: 16px;
+            color: var(--champagne-dark);
+            font-size: 1.2rem;
+            font-weight: 500;
+            box-shadow: 0 8px 32px rgba(201, 169, 98, 0.2);
+        }
+
+        .section {
+            padding: clamp(2rem, 6vw, 4rem) clamp(1rem, 4vw, 2rem);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* ========== Hero 开场 ========== */
+        .hero {
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .hero-photo-wrap {
+            width: 100%;
+            max-width: 420px;
+            margin: 0 auto 1.5rem;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(201, 169, 98, 0.35);
+            border: 3px solid var(--white);
+        }
+        .hero-photo-wrap img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .hero-title {
+            font-size: clamp(1.6rem, 7vw, 2.6rem);
+            font-weight: 700;
+            color: var(--champagne-dark);
+            margin-bottom: 1rem;
+            letter-spacing: 0.02em;
+        }
+        .hero-counter {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 0.8rem 1.5rem;
+            border: 2px solid var(--champagne-light);
+            box-shadow: 0 4px 20px rgba(201, 169, 98, 0.2);
+            display: inline-flex;
+            align-items: baseline;
+            gap: 0.35rem;
+        }
+        .hero-counter-num {
+            font-size: clamp(1.8rem, 6vw, 2.8rem);
+            font-weight: 700;
+            color: var(--champagne-dark);
+        }
+        .hero-counter-label { font-size: clamp(0.85rem, 2.5vw, 1rem); color: var(--text-secondary); }
+
+        /* ========== 时光轴 ========== */
+        .timeline-section { padding-top: 3rem; padding-bottom: 3rem; }
+        .section-title {
+            font-size: clamp(1.3rem, 5vw, 1.7rem);
+            color: var(--champagne-dark);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .timeline {
+            position: relative;
+            max-width: 560px;
+            margin: 0 auto;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            transform: translateX(-50%);
+            background: linear-gradient(180deg, var(--champagne-light), var(--champagne));
+            border-radius: 3px;
+        }
+        .timeline-node {
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            cursor: pointer;
+        }
+        .timeline-node:nth-child(odd) { justify-content: flex-end; }
+        .timeline-node .node-content {
+            width: calc(50% - 2rem);
+            min-width: 140px;
+            padding: 1rem 1.25rem;
+            background: var(--white);
+            border-radius: 14px;
+            border: 1px solid var(--champagne-light);
+            box-shadow: 0 6px 20px rgba(201, 169, 98, 0.12);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .timeline-node:nth-child(odd) .node-content { margin-left: auto; }
+        .timeline-node:hover .node-content {
+            transform: scale(1.03);
+            box-shadow: 0 10px 28px rgba(201, 169, 98, 0.25);
+        }
+        .timeline-node .node-title {
+            font-weight: 600;
+            color: var(--champagne-dark);
+            font-size: 1.05rem;
+            margin-bottom: 0.2rem;
+        }
+        .timeline-node .node-desc { font-size: 0.9rem; color: var(--text-primary); line-height: 1.5; }
+        .timeline-node .node-dot {
+            position: absolute;
+            left: 50%;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--champagne);
+            border: 3px solid var(--white);
+            box-shadow: 0 0 0 2px var(--champagne-light);
+            transform: translate(-50%, 0.5rem);
+        }
+
+        /* ========== 回忆相册 瀑布流 ========== */
+        .gallery-section { padding-top: 2rem; padding-bottom: 3rem; }
+        .gallery {
+            column-count: 2;
+            column-gap: 1rem;
+        }
+        @media (min-width: 600px) { .gallery { column-count: 3; column-gap: 1.25rem; } }
+        .gallery-item {
+            break-inside: avoid;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(201, 169, 98, 0.15);
+            border: 1px solid var(--champagne-light);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .gallery-item:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 32px rgba(201, 169, 98, 0.25);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .gallery-item-caption {
+            padding: 0.6rem 0.75rem;
+            background: var(--white);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* ========== 情书 ========== */
+        .message-section { padding-top: 2rem; padding-bottom: 3rem; }
+        .message-box {
+            background: var(--white);
+            border-radius: 20px;
+            padding: clamp(1.5rem, 5vw, 2.5rem);
+            border: 1px solid var(--champagne-light);
+            box-shadow: 0 10px 36px rgba(201, 169, 98, 0.12);
+        }
+        .message-box p {
+            font-size: clamp(1rem, 2.8vw, 1.15rem);
+            line-height: 1.9;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+        .message-box p:last-child { margin-bottom: 0; }
+        .message-signature {
+            margin-top: 1rem;
+            text-align: right;
+            color: var(--champagne-dark);
+        }
+
+        /* 右上角音乐按钮（仿 birthday） */
+        .music-wrap {
+            position: fixed;
+            top: 0.5rem;
+            right: 0.5rem;
+            z-index: 100;
+        }
+        .music-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid var(--champagne);
+            border-radius: 999px;
+            color: var(--champagne-dark);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(201, 169, 98, 0.25);
+            transition: all 0.3s ease;
+        }
+        .music-btn:hover {
+            background: var(--white);
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(201, 169, 98, 0.35);
+        }
+        .music-btn .icon { font-size: 1rem; }
+
+        /* 灯箱 / 弹窗 */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
+            background: rgba(0, 0, 0, 0.88);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .lightbox.show { display: flex; }
+        .lightbox-content {
+            max-width: 90vw;
+            max-height: 85vh;
+            position: relative;
+        }
+        .lightbox-content img {
+            max-width: 100%;
+            max-height: 85vh;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .lightbox-close {
+            position: absolute;
+            top: -2.5rem;
+            right: 0;
+            background: var(--white);
+            border: 2px solid var(--champagne-light);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--champagne-dark);
+        }
+        .lightbox-caption {
+            text-align: center;
+            margin-top: 0.75rem;
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.9);
+        }
+    </style>
+</head>
+<body>
+    <div v-for="i in 10" :key="'f'+i" class="floater"
+        :style="{ left: (2 + i * 10) + '%', animationDelay: (i * 1.8) + 's', animationDuration: (18 + i % 4) + 's' }">❤</div>
+
+    <div id="app">
+        <!-- 进入页遮罩：点击任意处播放音乐并进入 -->
+        <div class="entry-overlay" :class="{ hidden: entered }" @click="enterPage" @touchend.prevent="enterPage">
+            <div class="entry-overlay-text">点击此处或页面任意处播放音乐 ❤️</div>
+        </div>
+
+        <!-- 右上角音乐按钮（仿 birthday） -->
+        <div class="music-wrap">
+            <button type="button" class="music-btn" @click="toggleMusic" aria-label="播放背景音乐">
+                <span class="icon">{{ musicPlaying ? '❚❚' : '▶' }}</span>
+                <span>{{ musicPlaying ? '暂停音乐' : '播放音乐' }}</span>
+            </button>
+        </div>
+
+        <!-- Hero 开场 -->
+        <section class="section hero">
+            <div class="hero-photo-wrap">
+                <img :src="heroPhoto" alt="我们" @error="imgError($event, 'hero')">
+            </div>
+            <h1 class="hero-title font-serif">我们结婚2周年了</h1>
+            <div class="hero-counter">
+                <span class="hero-counter-num font-handwriting" ref="counterEl">0</span>
+                <span class="hero-counter-label font-sans">相爱天数</span>
+            </div>
+        </section>
+
+        <!-- 时光轴 -->
+        <section class="section timeline-section">
+            <h2 class="section-title font-serif">我们的时光轴</h2>
+            <div class="timeline">
+                <div v-for="(node, i) in timelineNodes" :key="node.title" class="timeline-node" @click="openTimelinePhoto(node)">
+                    <div class="node-dot"></div>
+                    <div class="node-content">
+                        <div class="node-title font-serif">{{ node.title }}</div>
+                        <div class="node-desc font-sans">{{ node.desc }}</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 回忆相册 -->
+        <section class="section gallery-section">
+            <h2 class="section-title font-serif">回忆相册</h2>
+            <div class="gallery">
+                <div v-for="(item, i) in galleryItems" :key="i" class="gallery-item" @click="openLightbox(item)">
+                    <img :src="item.src" :alt="item.caption" loading="lazy" @error="imgError($event, 'gallery', item)">
+                    <div class="gallery-item-caption font-sans">{{ item.caption }}</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 情书 -->
+        <section class="section message-section">
+            <h2 class="section-title font-serif">写给你的话</h2>
+            <div class="message-box">
+                <p class="font-sans">从高中相识到现在，我们一起走过很多个春夏秋冬。谢谢你选择我，愿意和我一起把日子过成诗。</p>
+                <p class="font-sans">结婚2周年，只是我们漫长旅途中的一个小站。未来还有无数个纪念日，希望每一个都有你在身边。</p>
+                <p class="font-sans">愿我们永远像现在一样，相爱、相守、相知。永远爱你。</p>
+                <p class="message-signature font-handwriting">—— 永远爱你的陈先生</p>
+            </div>
+        </section>
+
+        <!-- 时光轴弹窗 -->
+        <div class="lightbox" :class="{ show: timelinePopup }" @click="timelinePopup = null">
+            <div class="lightbox-content" @click.stop>
+                <button type="button" class="lightbox-close" @click="timelinePopup = null">×</button>
+                <img v-if="timelinePopup" :src="timelinePopup.photo" :alt="timelinePopup.title">
+                <p v-if="timelinePopup" class="lightbox-caption">{{ timelinePopup.title }} · {{ timelinePopup.desc }}</p>
+            </div>
+        </div>
+
+        <!-- 相册灯箱 -->
+        <div class="lightbox" :class="{ show: lightboxItem }" @click="lightboxItem = null">
+            <div class="lightbox-content" @click.stop>
+                <button type="button" class="lightbox-close" @click="lightboxItem = null">×</button>
+                <img v-if="lightboxItem" :src="lightboxItem.src" :alt="lightboxItem.caption">
+                <p v-if="lightboxItem" class="lightbox-caption">{{ lightboxItem.caption }}</p>
+            </div>
+        </div>
+
+        <!-- 音频放在 #app 内，ref 才能绑定；id 供首次点击时备用获取 -->
+        <audio id="anniversaryBgMusic" ref="loveSong" preload="auto" loop>
+            <source src="纪念日图片/TheTruthThatYouLeave.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://unpkg.com/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script>
+        const { createApp, ref, computed, onMounted } = Vue;
+
+        function getImgBase() {
+            try { return new URL('纪念日图片/', window.location.href).href; }
+            catch (e) { return '纪念日图片/'; }
+        }
+        const base = getImgBase();
+
+        createApp({
+            setup() {
+                const counterEl = ref(null);
+                const loveSong = ref(null);
+                const songUnlocked = ref(false);
+                const entered = ref(false);
+                const musicPlaying = ref(false);
+
+                const meetDate = '2013-09-01';
+                const weddingDate = '2025-02-07';
+                const daysTogether = computed(() => {
+                    const start = new Date(meetDate);
+                    const now = new Date();
+                    return Math.max(0, Math.floor((now - start) / 86400000));
+                });
+
+                const heroPhoto = ref(base + '52.jpg');
+
+                const timelineNodes = [
+                    { title: '相识', desc: '高中时代，第一次遇见你', photo: base + '54.jpg' },
+                    { title: '相恋', desc: '从朋友到恋人', photo: base + '60.jpg' },
+                    { title: '领证', desc: '我们合法啦', photo: base + '32.jpg' },
+                    { title: '婚礼', desc: '谢谢你嫁给我', photo: base + '37.jpg' },
+                    { title: '第一次看演唱会', desc: '一起尖叫的夜晚', photo: base + '65.jpg' },
+                    { title: '婚后第一个生日', desc: '结婚后陪你过的第一个生日', photo: base + '66.jpg' },
+                    { title: '第一次结婚纪念日', desc: '结婚一周年', photo: base + '1.jpg' },
+                    { title: '现在的日常', desc: '每个月都会见面', photo: base + '33.jpg' }
+                ];
+
+                const galleryItems = ref([
+                    { src: base + '16.jpg', caption: '笑得像个孩子' },
+                    { src: base + '23.jpg', caption: '一起旅行' },
+                    { src: base + '40.jpg', caption: '某个周末的下午' },
+                    { src: base + '14.jpg', caption: '纪念日' },
+                    { src: base + '64.jpg', caption: '美到窒息' },
+                    { src: base + '3.jpg', caption: '海边' },
+                    { src: base + '27.jpg', caption: 'yeah I do' },
+                    { src: base + '28.jpg', caption: '未来还要一起去很多地方' },
+                    { src: base + '36.jpg', caption: '永远爱你' },
+                    { src: base + '38.jpg', caption: '平常的你也是闪闪发光的' },
+                    { src: base + '48.jpg', caption: '梦回大唐' },
+                    { src: base + '25.jpg', caption: '夕阳很美 但是你更美' },
+                    { src: base + '12.jpg', caption: '草地上的秋千，白裙与风车，风和日丽' },
+                    { src: base + '19.jpg', caption: '在动物园学小老虎的你，可爱到犯规' },
+                    { src: base + '20.jpg', caption: '金碧辉煌下双手合十，愿你心想事成' },
+                    { src: base + '5.jpg', caption: '抱着粉红玩偶，笑得像收到礼物的小孩' },
+                    { src: base + '45.jpg', caption: '西街旧事门前，汉服与团扇，一眼如故' },
+                    { src: base + '6.jpg', caption: '草原经幡下抱着小羊，温柔又治愈' },
+                    { src: base + '7.jpg', caption: '逛宜家时认真看手机的你，也是日常里的小确幸' },
+                    { src: base + '26.jpg', caption: '醴陵陶瓷博物馆，周末愉快，几何空间里的你' },
+                    { src: base + '30.jpg', caption: '凤冠霞帔比耶的你，惊艳了时光' },
+                    { src: base + '31.jpg', caption: '佳偶天成，囍字与蝴蝶，只为你' },
+                    { src: base + '47.jpg', caption: '戴着小鱼帽比耶，笑得像夏天' },
+                    { src: base + '49.jpg', caption: '碧海蓝天下挥手，是和你一起的夏天' },
+                    { src: base + '50.jpg', caption: '经幡与花海间，张开双手拥抱草原' },
+                    { src: base + '55.jpg', caption: '栏杆边托腮沉思，车流与城景在身后' },
+                    { src: base + '56.jpg', caption: '日落剪影，江面与城市天际线' },
+                    { src: base + '58.jpg', caption: '长发剪影，暖色天空与远方城郭' },
+                    { src: base + '57.jpg', caption: '爱心滤镜自拍，黑卫衣与蓝高领' },
+                    { src: base + '59.jpg', caption: '樱桃耳环与红唇，老街灰墙' },
+                    { src: base + '60.jpg', caption: '整理衣领的瞬间，浅色大衣与青绿毛衣' },
+                    { src: base + '61.jpg', caption: '草地上的玫瑰花瓣，闭眼微笑' },
+                    { src: base + '62.jpg', caption: '双马尾自拍，白T与手绘爱心光环' },
+                    { src: base + '64.jpg', caption: '捧花与彩虹光晕，暖黄灯光' },
+                    { src: base + '63.jpg', caption: '双丸子头与脸颊爱心，FESTIVAL PARIS' },
+                    { src: base + '8.jpg', caption: '牛仔帽喂白马，西部风' },
+                    { src: base + '15.jpg', caption: '红袍花冠，夜市灯笼下的你' },
+                    { src: base + '18.jpg', caption: '红亭碧水边，汉服与团扇' },
+                    { src: base + '22.jpg', caption: '碧水蓝天，白裙与墨镜' },
+                    { src: base + '34.jpg', caption: '海水齐腰，比心一笑' },
+                    { src: base + '35.jpg', caption: '仙人掌丛中的红裙' },
+                    { src: base + '39.jpg', caption: '粉裙黑丝绒，侧颜与蝴蝶结' }
+                ]); 
+
+                const timelinePopup = ref(null);    
+                const lightboxItem = ref(null);
+
+                function openTimelinePhoto(node) {
+                    timelinePopup.value = node;
+                }
+
+                function openLightbox(item) {
+                    lightboxItem.value = item;
+                }
+
+                function startMusic() {
+                    const audio = loveSong.value || document.getElementById('anniversaryBgMusic');
+                    if (!audio) return;
+                    audio.volume = 1;
+                    audio.currentTime = 0;
+                    // 移动端（尤其 iOS）需在用户手势内 load，再 play
+                    audio.load();
+                    audio.play().then(() => {
+                        songUnlocked.value = true;
+                        musicPlaying.value = true;
+                        entered.value = true;
+                        document.body.classList.remove('before-first-click');
+                    }).catch(() => {
+                        document.body.classList.remove('before-first-click');
+                        // 不设 entered，方便 touchend 时再试一次（iOS 常需在 touchend 触发）
+                    });
+                }
+                function enterPage() {
+                    if (entered.value) return;
+                    document.body.classList.remove('before-first-click');
+                    startMusic();
+                }
+                function toggleMusic() {
+                    const audio = loveSong.value || document.getElementById('anniversaryBgMusic');
+                    if (!audio) return;
+                    if (musicPlaying.value) {
+                        audio.pause();
+                        musicPlaying.value = false;
+                    } else {
+                        audio.currentTime = 0;
+                        audio.play().then(() => { musicPlaying.value = true; }).catch(() => {});
+                    }
+                }
+
+                function imgError(e, type, item) {
+                    if (type === 'hero') e.target.src = base + '2.jpg';
+                    else if (item && item.src) e.target.src = base + '1.jpg';
+                }
+
+                onMounted(() => {
+                    document.body.classList.add('before-first-click');
+                    // 用捕获阶段监听，确保在用户手势的同一调用栈里触发播放（避免被拦截）
+                    function onFirstInteraction() {
+                        if (!entered.value) enterPage();
+                    }
+                    document.body.addEventListener('click', onFirstInteraction, { once: true, capture: true });
+                    document.body.addEventListener('touchstart', onFirstInteraction, { once: true, capture: true });
+                    // 手机端：iOS 等常在 touchend 才认可“点击”，touchstart 失败时给一次 touchend 重试
+                    document.body.addEventListener('touchend', onFirstInteraction, { once: true, capture: true });
+                    if (loveSong.value) {
+                        loveSong.value.addEventListener('play', () => { musicPlaying.value = true; });
+                        loveSong.value.addEventListener('pause', () => { musicPlaying.value = false; });
+                    }
+                    if (counterEl.value && typeof gsap !== 'undefined') {
+                        const el = counterEl.value;
+                        const end = daysTogether.value;
+                        gsap.fromTo(el, { textContent: 0 }, {
+                            textContent: end,
+                            duration: 2,
+                            snap: { textContent: 1 },
+                            ease: 'power2.out'
+                        });
+                    }
+                });
+
+                return {
+                    counterEl,
+                    loveSong,
+                    songUnlocked,
+                    entered,
+                    musicPlaying,
+                    daysTogether,
+                    heroPhoto,
+                    timelineNodes,
+                    galleryItems,
+                    timelinePopup,
+                    lightboxItem,
+                    openTimelinePhoto,
+                    openLightbox,
+                    startMusic,
+                    enterPage,
+                    toggleMusic,
+                    imgError
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
